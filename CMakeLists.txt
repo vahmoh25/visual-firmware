@@ -7,7 +7,12 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 project(VisualFirmware)
 
 add_executable(${PROJECT_NAME}
+    include/visual_firmware/gpio.h
     src/main.c
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    include/
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE

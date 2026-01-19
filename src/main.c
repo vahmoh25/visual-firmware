@@ -1,16 +1,23 @@
-#include <stdint.h>
-
-static constexpr uint32_t IO_BANK0_BASE = 0x40028000;
-static constexpr uint32_t PADS_BANK0_BASE = 0x40038000;
-static constexpr uint32_t SIO_BASE = 0xD0000000;
+#include <visual_firmware/gpio.h>
 
 static void reset_handler(void) {
-    *(volatile uint32_t *)(IO_BANK0_BASE + 0x04 + (14 * 8)) = 5;
-    *(volatile uint32_t *)(PADS_BANK0_BASE + 0x04 + (14 * 4)) &= ~(1 << 8);
-    *(volatile uint32_t *)(SIO_BASE + 0x018) = (1 << 14);
-    *(volatile uint32_t *)(SIO_BASE + 0x038) = (1 << 14);
+    gpio_set_pad_control(14, (gpio_pad_control_t){
+        .slewfast = 0,
+        .schmitt = 1,
+        .pde = 1,
+        .pue = 1,
+        .driver = GPIO_DRIVE_2MA,
+        .ie = 1,
+        .od = 0,
+        .iso = 0,
+    });
+    gpio_set_function(14, GPIO_FUNCTION_SIO);
+    gpio_set_out(14);
     while (true) {
-        __asm volatile ("wfi");
+        for (uint32_t i = 0; i < 1000000; i++){
+            __asm__ __volatile__ ("nop");
+        }
+        gpio_xor_oe(14);
     }
 }
 
