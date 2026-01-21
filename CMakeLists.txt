@@ -9,7 +9,10 @@ project(VisualFirmware)
 add_executable(${PROJECT_NAME}
     include/visual_firmware/gpio.h
     src/main.c
+    src/scheduler.c
     src/tasks/task_1.c
+    src/tasks/task_2.c
+    src/tasks/task_3.c
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -20,6 +23,7 @@ target_include_directories(${PROJECT_NAME}
 target_compile_options(${PROJECT_NAME}
     PRIVATE
         -mcpu=cortex-m33
+        -ffreestanding
         -Wall
         -Werror
 )

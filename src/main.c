@@ -1,43 +1,50 @@
-#include <visual_firmware/gpio.h>
+#include <stdint.h>
 
-#include "tasks/task_1.h"
+#include <visual_firmware/scheduler.h>
+
+extern uint8_t data_start[];
+extern uint8_t data_end[];
+extern uint8_t data_load[];
+extern uint8_t bss_start[];
+extern uint8_t bss_end[];
+extern uint8_t stack_top[];
 
 static void default_handler(void) {
     while (true) {
-        __asm__ __volatile__ ("nop");
+        __asm__ __volatile__ ("wfi");
     }
 }
 
 static void reset_handler(void) {
-    task_1_run();
-}
-
-static void pendsv_handler(void) {
-    while (true) {
-        __asm__ __volatile__ ("nop");
+    for (uint8_t *source = data_load, *destination = data_start; destination < data_end;) {
+        *destination++ = *source++;
     }
-}
-
-static void systick_handler(void) {
-    while (true) {
-        __asm__ __volatile__ ("nop");
+    for (uint8_t *destination = bss_start; destination < bss_end;) {
+        *destination++ = 0;
     }
+    scheduler_start();
 }
 
 __attribute__((aligned(128)))
 __attribute__((section(".vector_table")))
 __attribute__((used))
 static const uintptr_t vector_table[] = {
-    0x20082000,
+    (uintptr_t)stack_top,
     (uintptr_t)reset_handler,
     (uintptr_t)default_handler,
     (uintptr_t)default_handler,
     (uintptr_t)default_handler,
     (uintptr_t)default_handler,
     (uintptr_t)default_handler,
+    0,
+    0,
+    0,
+    0,
     (uintptr_t)default_handler,
-    (uintptr_t)pendsv_handler,
-    (uintptr_t)systick_handler,
+    (uintptr_t)default_handler,
+    0,
+    (uintptr_t)scheduler_pendsv_handler,
+    (uintptr_t)scheduler_systick_handler,
 
 };
 
