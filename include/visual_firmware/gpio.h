@@ -5,7 +5,6 @@
 
 static constexpr uint32_t IO_BANK0_BASE = 0x40028000;
 static constexpr uint32_t PADS_BANK0_BASE = 0x40038000;
-static constexpr uint32_t SIO_BASE = 0xD0000000;
 
 typedef uint8_t gpio_pin_t;
 
@@ -45,42 +44,6 @@ __attribute__((always_inline))
 __attribute__((used))
 static inline void gpio_set_function(gpio_pin_t pin, gpio_function_t function) {
     *(volatile uint32_t *)(IO_BANK0_BASE + 0x04 + (pin * 8)) = function;
-}
-
-__attribute__((always_inline))
-__attribute__((used))
-static inline void gpio_set_out(gpio_pin_t pin) {
-    *(volatile uint32_t *)(SIO_BASE + 0x018) = 1 << pin;
-}
-
-__attribute__((always_inline))
-__attribute__((used))
-static inline void gpio_clr_out(gpio_pin_t pin) {
-    *(volatile uint32_t *)(SIO_BASE + 0x020) = 1 << pin;
-}
-
-__attribute__((always_inline))
-__attribute__((used))
-static inline void gpio_xor_out(gpio_pin_t pin) {
-    *(volatile uint32_t *)(SIO_BASE + 0x028) = 1 << pin;
-}
-
-__attribute__((always_inline))
-__attribute__((used))
-static inline void gpio_set_oe(gpio_pin_t pin) {
-    *(volatile uint32_t *)(SIO_BASE + 0x038) = 1 << pin;
-}
-
-__attribute__((always_inline))
-__attribute__((used))
-static inline void gpio_clr_oe(gpio_pin_t pin) {
-    *(volatile uint32_t *)(SIO_BASE + 0x040) = 1 << pin;
-}
-
-__attribute__((always_inline))
-__attribute__((used))
-static inline void gpio_xor_oe(gpio_pin_t pin) {
-    *(volatile uint32_t *)(SIO_BASE + 0x048) = 1 << pin;
 }
 
 #endif

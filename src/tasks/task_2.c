@@ -1,6 +1,6 @@
 #include "task_1.h"
 
-#include <visual_firmware/gpio.h>
+#include <visual_firmware/sio.h>
 
 void task_2_run(void) {
     gpio_set_pad_control(17, (gpio_pad_control_t){
@@ -14,11 +14,11 @@ void task_2_run(void) {
         .iso = 0,
     });
     gpio_set_function(17, GPIO_FUNCTION_SIO);
-    gpio_set_out(17);
+    sio_set_out(17);
     while (true) {
         for (uint32_t i = 0; i < 1000000; i++){
             __asm__ __volatile__ ("nop");
         }
-        gpio_xor_oe(17);
+        sio_xor_oe(17);
     }
 }

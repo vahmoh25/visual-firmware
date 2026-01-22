@@ -1,13 +1,15 @@
-#include <visual_firmware/scheduler.h>
+#include <visual_firmware/task.h>
 
 #include <stdint.h>
 
 #include "tasks/task_1.h"
 #include "tasks/task_2.h"
+#include "tasks/task_3.h"
 
 #define TASKS \
     X(task_1_run) \
     X(task_2_run) \
+    X(task_3_run) \
 
 constexpr uint32_t TASK_STACK_SIZE = 128;
 
@@ -46,7 +48,7 @@ uint32_t *schedule_next_task(uint32_t *current_sp) {
     return tasks[current_task].stack_top;
 }
 
-void scheduler_start(void) {
+void task_start(void) {
     for (uint8_t i = 0; i < TASK_NUMBER; i++) {
         tasks[i].stack_top = tasks[i].stack_base + TASK_STACK_SIZE;
         *(--tasks[i].stack_top) = 1 << 24;
@@ -71,7 +73,7 @@ void scheduler_start(void) {
 }
 
 __attribute__((naked))
-void scheduler_pendsv_handler(void) {
+void task_pendsv_handler(void) {
     __asm volatile (
         "mrs r0, psp \n"
         "stmdb r0!, {r4-r11} \n"
@@ -83,6 +85,6 @@ void scheduler_pendsv_handler(void) {
     );
 }
 
-void scheduler_systick_handler(void) {
+void task_systick_handler(void) {
     *(volatile uint32_t *)(SCB_ICSR) = 1 << 28;
 }

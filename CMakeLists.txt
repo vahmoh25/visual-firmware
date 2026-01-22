@@ -8,6 +8,7 @@ project(VisualFirmware)
 
 add_executable(${PROJECT_NAME}
     include/visual_firmware/gpio.h
+    include/visual_firmware/sio.h
     src/main.c
     src/scheduler.c
     src/tasks/task_1.c
